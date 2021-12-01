@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Canvas</title>
+        <style>
+            canvas {
+                background-color: #eee;
+            }
+
+            .color-btn {
+                width: 30px;
+                height: 30px;
+                border: 0;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            .color-btn[data-color="black"] {
+                background-color: black;
+            }
+
+            .color-btn[data-color="red"] {
+                background-color: red;
+            }
+
+            .color-btn[data-color="green"] {
+                background-color: green;
+            }
+
+            .color-btn[data-color="blue"] {
+                background-color: blue;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Image</h1>
+        <canvas class="canvas" width="600" height="400"></canvas>
+        <div class="control">
+            <button type="button" class="color-btn" data-color="black"></button>
+            <button type="button" class="color-btn" data-color="red"></button>
+            <button type="button" class="color-btn" data-color="green"></button>
+            <button type="button" class="color-btn" data-color="blue"></button>
+        </div>
+
+        <script>
+            const canvas = document.querySelector(`.canvas`);
+            const context = canvas.getContext(`2d`);
+            const control = document.querySelector(`.control`);
+            let drawingMode;
+            let colorVal = "black";
+
+            function downHandler() {
+                drawingMode = true;
+            }
+
+            function moveHandler(event) {
+                if (!drawingMode) return;\
+
+                context.beginPath();
+                context.arc(
+                    event.layerX,
+                    event.layerY,
+                    10,
+                    0,
+                    Math.PI * 2,
+                    false
+                );
+                context.fill();
+            }
+
+            function upHandler() {
+                drawingMode = false;
+            }
+
+            function setColor(event) {
+                colorVal = event.target.getAttribute("data-color");
+                context.fillStyle = colorVal;
+            }
+
+            canvas.addEventListener(`mousedown`, downHandler);
+            canvas.addEventListener(`mousemove`, moveHandler);
+            canvas.addEventListener(`mouseup`, upHandler);
+
+            control.addEventListener(`click`, setColor);
+        </script>
+    </body>
+</html>
