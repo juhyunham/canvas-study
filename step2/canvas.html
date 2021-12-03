@@ -33,42 +33,104 @@
             .color-btn[data-color="blue"] {
                 background-color: blue;
             }
+
+            .img-btn {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background: url("../images/juham.jpg") no-repeat 50% 50% / cover;
+            }
+
+            .save-btn {
+                display: block;
+                margin-top: 10px;
+            }
+
+            .result-image {
+                display: block;
+                margin-top: 40px;
+                border: 1px solid #333;
+                width: 600px;
+                height: 400px;
+            }
         </style>
     </head>
     <body>
         <h1>Image</h1>
         <canvas class="canvas" width="600" height="400"></canvas>
         <div class="control">
-            <button type="button" class="color-btn" data-color="black"></button>
-            <button type="button" class="color-btn" data-color="red"></button>
-            <button type="button" class="color-btn" data-color="green"></button>
-            <button type="button" class="color-btn" data-color="blue"></button>
+            <button
+                type="button"
+                class="color-btn"
+                data-type="color"
+                data-color="black"
+            ></button>
+            <button
+                type="button"
+                class="color-btn"
+                data-type="color"
+                data-color="red"
+            ></button>
+            <button
+                type="button"
+                class="color-btn"
+                data-type="color"
+                data-color="green"
+            ></button>
+            <button
+                type="button"
+                class="color-btn"
+                data-type="color"
+                data-color="blue"
+            ></button>
+            <button type="buton" class="img-btn" data-type="image"></button>
+            <button type="button" class="save-btn">이미지 저장</button>
+            <div class="result-image"></div>
         </div>
 
         <script>
             const canvas = document.querySelector(`.canvas`);
             const context = canvas.getContext(`2d`);
             const control = document.querySelector(`.control`);
+            const saveBtn = document.querySelector(`.save-btn`);
+            const resultImage = document.querySelector(`.result-image`);
             let drawingMode;
+            let brush;
             let colorVal = "black";
+
+            const imgElem = new Image();
+            imgElem.src = "../images/juham.jpg";
 
             function downHandler() {
                 drawingMode = true;
             }
 
             function moveHandler(event) {
-                if (!drawingMode) return;\
+                if (!drawingMode) return;
 
-                context.beginPath();
-                context.arc(
-                    event.layerX,
-                    event.layerY,
-                    10,
-                    0,
-                    Math.PI * 2,
-                    false
-                );
-                context.fill();
+                switch (brush) {
+                    case "color":
+                        context.beginPath();
+                        context.arc(
+                            event.layerX,
+                            event.layerY,
+                            10,
+                            0,
+                            Math.PI * 2,
+                            false
+                        );
+                        context.fill();
+                        break;
+                    case "image":
+                        context.drawImage(
+                            imgElem,
+                            event.layerX,
+                            event.layerY,
+                            50,
+                            50
+                        );
+                        break;
+                }
             }
 
             function upHandler() {
@@ -76,8 +138,17 @@
             }
 
             function setColor(event) {
+                brush = event.target.getAttribute("data-type");
                 colorVal = event.target.getAttribute("data-color");
                 context.fillStyle = colorVal;
+            }
+
+            function createImage() {
+                const url = canvas.toDataURL(`image/url`);
+                console.log(url);
+                const imgElem = new Image();
+                imgElem.src = url;
+                resultImage.appendChild(imgElem);
             }
 
             canvas.addEventListener(`mousedown`, downHandler);
@@ -85,6 +156,8 @@
             canvas.addEventListener(`mouseup`, upHandler);
 
             control.addEventListener(`click`, setColor);
+
+            saveBtn.addEventListener(`click`, createImage);
         </script>
     </body>
 </html>
